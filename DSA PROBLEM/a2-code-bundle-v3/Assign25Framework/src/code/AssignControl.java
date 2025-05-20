@@ -118,7 +118,7 @@ public class AssignControl {
 		//my code
 		cityNeighbors = new HashMap<>(); // Initialize the map for city neighbors
 		cityAssignments = new HashMap<>(); // Initialize the map for city assignments
-		allCities = new HashMap<>(); // Initialize the map for all cities
+		allCities = new HashSet<>(); // Initialize the map for all cities
 		
 	}
 
