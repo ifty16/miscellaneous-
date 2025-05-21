@@ -776,7 +776,10 @@ public class AssignControl {
 	
 		try {
 
-			String dataDir = "D:/academics/miscellenius/DSA PROBLEM/a2-sample-data/data";
+			//String dataDir = "D:/academics/miscellenius/DSA PROBLEM/a2-sample-data/data";
+			String dataDir = "/home/ifty3110/academics/SIDE WORDKS/DSA PROBLEM/a2-sample-data/data";
+
+			
 			// make sure there's a file separator at the end
 			String fileBaseName = "sample1";
 			FileNames fNames = new FileNames(dataDir, fileBaseName);
