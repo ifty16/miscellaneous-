@@ -632,15 +632,133 @@ public class AssignControl {
 	}
 
 	public Vector<Integer> makePathWithAssign(Integer city1, Integer city2, Integer troopSource) {
-		// PRE: city1, city2 are existing cities; troopSource is a nation;
-		//        there is NOT a complete valid assignment already 
-		// POST: Returns a path between city1 and city2 that has at least one city assigned from troopSource,
-		//         if such a path exists, as a vector;
-		//         returns an empty vector otherwise
+        // PRE: city1, city2 are existing cities; troopSource is a nation;
+        //      there is NOT a complete valid assignment already 
+        // POST: Returns a path between city1 and city2 that has at least one city assigned from troopSource,
+        //       if such a path exists, as a vector;
+        //       returns an empty vector otherwise
+        
+        // Check if cities exist
+        if (!allCities.contains(city1) || !allCities.contains(city2)) {
+            return new Vector<>();
+        }
+        
+        // First, find a path between city1 and city2
+        if (!existsPath(city1, city2)) {
+            return new Vector<>();
+        }
+        
+        // Save current assignments
+        Map<Integer, Integer> savedAssignments = new HashMap<>(cityAssignments);
+        
+        // Find a path from city1 to city2
+        Vector<Integer> path = findPathBetween(city1, city2);
+        
+        if (path.isEmpty()) {
+            return new Vector<>();  // No path exists
+        }
+        
+        // Check if the path already has a city assigned from troopSource
+        boolean hasTroopSource = false;
+        for (Integer city : path) {
+            if (isAssigned(city) && getAssign(city).equals(troopSource)) {
+                hasTroopSource = true;
+                break;
+            }
+        }
+        
+        // If path doesn't have troopSource, try to assign it to an unassigned city
+        if (!hasTroopSource) {
+            boolean assigned = false;
+            for (Integer city : path) {
+                if (!isAssigned(city)) {
+                    // Check if assigning troopSource to this city would be valid
+                    boolean canAssign = true;
+                    Vector<Integer> neighbors = getNeighbours(city);
+                    for (Integer neighbor : neighbors) {
+                        if (isAssigned(neighbor) && getAssign(neighbor).equals(troopSource)) {
+                            canAssign = false;
+                            break;
+                        }
+                    }
+                    
+                    if (canAssign) {
+                        setAssign(city, troopSource);
+                        assigned = true;
+                        break;
+                    }
+                }
+            }
+            
+            // If couldn't assign troopSource to any city on path
+            if (!assigned) {
+                // Restore original assignments
+                cityAssignments = savedAssignments;
+                
+                // Try to complete the assignment with the constraint that at least one city on the path
+                // must be assigned to troopSource
+                for (Integer city : path) {
+                    if (!isAssigned(city)) {
+                        setAssign(city, troopSource);
+                        break;
+                    }
+                }
+                
+                // Complete the assignment
+                giveAnyAssignment();
+                
+                // Check if the final assignment is valid
+                if (!isValidAssign()) {
+                    // Restore original assignments and return empty path
+                    cityAssignments = savedAssignments;
+                    return new Vector<>();
+                }
+            }
+        }
+        
+        // Complete the assignment
+        giveAnyAssignment();
+        
+        return path;
+    }
 
-		// TODO
-		return null;
-	}
+	private Vector<Integer> findPathBetween(Integer city1, Integer city2) {
+        // Use BFS to find a path between city1 and city2
+        Queue<Integer> queue = new LinkedList<>();
+        Map<Integer, Integer> prev = new HashMap<>();
+        Set<Integer> visited = new HashSet<>();
+        
+        queue.add(city1);
+        visited.add(city1);
+        prev.put(city1, null);
+        
+        boolean found = false;
+        while (!queue.isEmpty() && !found) {
+            Integer current = queue.poll();
+            
+            if (current.equals(city2)) {
+                found = true;
+                break;
+            }
+            
+            Vector<Integer> neighbors = getNeighbours(current);
+            for (Integer neighbor : neighbors) {
+                if (!visited.contains(neighbor)) {
+                    visited.add(neighbor);
+                    queue.add(neighbor);
+                    prev.put(neighbor, current);
+                }
+            }
+        }
+        
+        // If no path found, return empty vector
+        if (!found) {
+            return new Vector<>();
+        }
+        
+        // Reconstruct path
+        return reconstructPath(prev, city1, city2);
+    }
 
 
 
