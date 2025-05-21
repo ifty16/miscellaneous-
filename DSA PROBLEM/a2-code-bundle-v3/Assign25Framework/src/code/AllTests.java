@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class AllTests {
 
-	String dataDir = "C:\\Users\\madra\\OneDrive\\Documents\\Documents\\teaching\\25comp2010\\ass\\data";
+	String dataDir = "D:/academics/miscellenius/DSA PROBLEM/a2-sample-data/data";
 
 	@Test
 	public void testSetGetAssignA() {
