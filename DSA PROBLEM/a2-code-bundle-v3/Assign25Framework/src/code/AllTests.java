@@ -11,6 +11,7 @@ import org.junit.Test;
 
 public class AllTests {
 
+	// String dataDir = "C:\\Users\\madra\\OneDrive\\Documents\\Documents\\teaching\\25comp2010\\ass\\data";
 	String dataDir = "D:/academics/miscellenius/DSA PROBLEM/a2-sample-data/data";
 
 	@Test
@@ -609,6 +610,35 @@ public class AllTests {
 	}
 
 	@Test
+	public void testGiveGreedyCityOrderingAssignmentB() { // NEW
+		AssignControl g = new AssignControl();
+		Vector<Road> rList;
+		Vector<Assign> aList;
+		Integer[] assigns = {3, 1, 2, 1, 3, 1, 2, 4, 1};
+		Boolean ans = Boolean.TRUE;
+
+		try {
+
+			String fileBaseName = "sample5";
+			FileNames fNames = new FileNames(dataDir, fileBaseName);
+
+			rList = g.readRoadsFromFile(fNames.getRoadFile());
+			aList = g.readAssignsFromFile(fNames.getAssignFile());
+			g.instantiateMap(rList, aList);
+			
+			g.giveGreedyCityOrderingAssignment();
+			for (int i = 0; i < assigns.length; i++) {
+				ans = ans && (g.getAssign(i+1) == assigns[i]); 
+			}
+			assertTrue(ans);
+
+		}
+		catch (IOException e) {
+			System.out.println("in exception: " + e);
+		}
+	}
+
+	@Test
 	public void testGiveGreedyRoadOrderingAssignmentA() {
 		AssignControl g = new AssignControl();
 		Vector<Road> rList;
@@ -631,6 +661,35 @@ public class AllTests {
 			}
 
 			assertTrue(ans);
+		}
+		catch (IOException e) {
+			System.out.println("in exception: " + e);
+		}
+	}
+
+	@Test
+	public void testGiveGreedyRoadOrderingAssignmentB() { // NEW
+		AssignControl g = new AssignControl();
+		Vector<Road> rList;
+		Vector<Assign> aList;
+		Integer[] assigns = {3, 1, 2, 3, 4, 1, 2, 1, 2};
+		Boolean ans = Boolean.TRUE;
+
+		try {
+
+			String fileBaseName = "sample5";
+			FileNames fNames = new FileNames(dataDir, fileBaseName);
+
+			rList = g.readRoadsFromFile(fNames.getRoadFile());
+			aList = g.readAssignsFromFile(fNames.getAssignFile());
+			g.instantiateMap(rList, aList);
+			
+			g.giveGreedyRoadOrderingAssignment();
+			for (int i = 0; i < assigns.length; i++) {
+				ans = ans && (g.getAssign(i+1) == assigns[i]); 
+			}
+			assertTrue(ans);
+
 		}
 		catch (IOException e) {
 			System.out.println("in exception: " + e);
@@ -705,6 +764,29 @@ public class AllTests {
 	}
 
 	@Test
+	public void testCanDoWithNSourcesD() { // NEW
+		AssignControl g = new AssignControl();
+		Vector<Road> rList;
+		Vector<Assign> aList;
+
+		try {
+
+			String fileBaseName = "sample5";
+			FileNames fNames = new FileNames(dataDir, fileBaseName);
+
+			rList = g.readRoadsFromFile(fNames.getRoadFile());
+			aList = g.readAssignsFromFile(fNames.getAssignFile());
+			g.instantiateMap(rList, aList);
+			
+			assertTrue(g.canDoWithNSources(4));
+
+		}
+		catch (IOException e) {
+			System.out.println("in exception: " + e);
+		}
+	}
+
+	@Test
 	public void testCanFindBetterSolnA() {
 		AssignControl g = new AssignControl();
 		Vector<Road> rList;
@@ -727,6 +809,36 @@ public class AllTests {
 			g.canFindBetterSoln();
 			
 			assertTrue((!g.clashExists(cities) && g.isEveryCityAssigned() && (g.numDiffAssigns() < initCount)));
+		}
+		catch (IOException e) {
+			System.out.println("in exception: " + e);
+		}
+	}
+
+	@Test
+	public void testCanFindBetterSolnB() { // NEW 
+		AssignControl g = new AssignControl();
+		Vector<Road> rList;
+		Vector<Assign> aList;
+		Integer[] initAssigns = {3, 1, 2, 4, 5, 1, 2, 1, 2};
+		Integer[] cities = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+		Integer initCount;
+		
+		try {
+
+			String fileBaseName = "sample5";
+			FileNames fNames = new FileNames(dataDir, fileBaseName);
+
+			rList = g.readRoadsFromFile(fNames.getRoadFile());
+			aList = g.readAssignsFromFile(fNames.getAssignFile());
+			g.instantiateMap(rList, aList);
+			
+			g.setAllAssigns(initAssigns);
+			initCount = g.numDiffAssigns();
+			g.canFindBetterSoln();
+				
+			assertTrue((!g.clashExists(cities) && g.isEveryCityAssigned() && (g.numDiffAssigns() < initCount)));
+
 		}
 		catch (IOException e) {
 			System.out.println("in exception: " + e);
@@ -773,6 +885,50 @@ public class AllTests {
 	}
 
 	@Test
+	public void testPathWithAssignB() { // NEW
+		AssignControl g = new AssignControl();
+		Vector<Road> rList;
+		Vector<Assign> aList;
+		Integer[] initAssigns = {3, 1, 2, 4, 5, 1, 2, 1, 2};
+		Integer[][] ans = {
+				{2, 1, 3, 4, 5, 8},
+				{2, 1, 3, 5, 4, 8}, 
+				{2, 1, 3, 5, 8}, 
+				{2, 3, 4, 5, 8},
+				{2, 3, 5, 4, 8},
+				{2, 3, 5, 8}
+		};
+		Boolean match = Boolean.FALSE;
+		Vector<Integer> chosenPath; 
+		
+		try {
+
+			String fileBaseName = "sample5";
+			FileNames fNames = new FileNames(dataDir, fileBaseName);
+
+			rList = g.readRoadsFromFile(fNames.getRoadFile());
+			aList = g.readAssignsFromFile(fNames.getAssignFile());
+			g.instantiateMap(rList, aList);
+			
+			g.setAllAssigns(initAssigns);
+			chosenPath = g.pathWithAssign(2, 8, 5);
+			for (Integer[] p : ans) { // check path has correctly assigned city
+				if (Arrays.equals(chosenPath.toArray(), p)) {
+					match = Boolean.TRUE;
+					break;
+				}
+			}
+			System.out.println(match);
+			
+			assertTrue(match);
+
+		}
+		catch (IOException e) {
+			System.out.println("in exception: " + e);
+		}
+	}
+
+	@Test
 	public void testMakePathWithAssignA() {
 		AssignControl g = new AssignControl();
 		Vector<Road> rList;
@@ -805,6 +961,56 @@ public class AllTests {
 			}
 			
 			assertTrue((match && !g.clashExists(cities) && g.isEveryCityAssigned()));
+		}
+		catch (IOException e) {
+			System.out.println("in exception: " + e);
+		}
+	}
+
+	@Test
+	public void testMakePathWithAssignB() { // NEW
+		AssignControl g = new AssignControl();
+		Vector<Road> rList;
+		Vector<Assign> aList;
+		Integer[][] ans = {
+				{2, 1, 3, 4, 5, 8},
+				{2, 1, 3, 5, 4, 8}, 
+				{2, 1, 3, 5, 8}, 
+				{2, 3, 4, 5, 8},
+				{2, 3, 5, 4, 8},
+				{2, 3, 5, 8},
+				{2, 1, 3, 8}, 
+				{2, 3, 4, 8}, 
+				{2, 3, 5, 8},
+				{2, 3, 8},
+				{2, 1, 3, 4, 8}
+		};
+		Integer[] cities = {1, 4, 5, 6, 7, 8, 9};
+		Boolean match = Boolean.FALSE;
+		Vector<Integer> chosenPath; 
+		
+		try {
+
+			String fileBaseName = "sample5";
+			FileNames fNames = new FileNames(dataDir, fileBaseName);
+
+			rList = g.readRoadsFromFile(fNames.getRoadFile());
+			aList = g.readAssignsFromFile(fNames.getAssignFile());
+			g.instantiateMap(rList, aList);
+			
+			chosenPath = g.makePathWithAssign(2, 8, 5);
+			System.out.println(chosenPath);
+			for (Integer[] p : ans) { // check path has correctly assigned city
+				if (Arrays.equals(chosenPath.toArray(), p)) {
+					match = Boolean.TRUE;
+					break;
+				}
+			}
+			
+			System.out.println(match);
+			
+			assertTrue((match && !g.clashExists(cities) && g.isEveryCityAssigned()));
+
 		}
 		catch (IOException e) {
 			System.out.println("in exception: " + e);
